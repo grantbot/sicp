@@ -51,5 +51,77 @@
 ;; if one of the predicates is a recursive call. 
 
 
-;; ex 1.7
+
+;; Notes from Ch 1.2
+;; Define a recursive factorial function
+;; n! = n * (n-1)!
+;; (factorial 3)
+;; (* 3 (factorial 2))
+;; (* 3 (* 2 (factorial 1)))
+;; (* 3 (* 2 1))
+;; (* 3 2)
+;; 6
+;; The length of the chain of deferred computations grows linearly with n, so we
+;; say it's a linear recursive process. 
+(define (factorial n)
+  (if (= n 1)
+    1  ; Need to use this in a deferred computation
+    (* n (factorial (- n 1)))))
+
+(factorial 6)  ; 720
+
+;; Define an iterative factorial function (via a recursive procedure that generates an
+;; iterative process)
+;; Based on idea that n! can be calculated by iteratively doing 1*2*3*4...*n
+;; (factorial-iter 3)
+;; (fact-iter 3)
+;; (fact-iter 1 1)
+;; (fact-iter 1 2)
+;; (fact-iter 2 3)
+;; (fact-iter 6 4)
+;; 6
+;; This is linear iterative process, even though it's a recursive function. The
+;; interpreter need only keep track of what variales are being passed to each
+;; successive call. No stack needed. No deferred computations.
+
+(define (factorial-iter n)
+  (define (fact-iter product count)
+    (if (> count n)
+      product  ; Don't need to compute with this.
+      (fact-iter (* product count)
+                 (+ count 1))))
+  (fact-iter 1 1))
+
+(factorial-iter 6)
+
+
+;; Exercise 1.9
+;; Two procedures, one iterative and one recursive (in terms of process) for
+;; adding two positive integers. Based on inc and dec which increment and
+;; decrement by 1. Describe their processes.
+;; RECURSIVE
+(define (+ a b)
+  (if (= a 0)
+    b
+    (inc (+ (dec a) b))))
+;; (+ 3 4)
+;; (inc (+ 2 4))
+;; (inc (inc (+ 1 4)))
+;; (inc (inc (inc (+ 0 4))))
+;; (inc (inc (inc (4))))
+;; (inc (inc 5))
+;; (inc 6)
+;; 7
+;; ITERATIVE
+(define (+ a b)
+  (if (= a 0)
+    b
+    (+ (dec a) (inc b))))
+;; (+ 3 4)
+;; (+ 2 5)
+;; (+ 1 6)
+;; (+ 0 7)
+;; 7
+
+
 
